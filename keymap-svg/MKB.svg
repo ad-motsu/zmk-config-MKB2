@@ -178,11 +178,11 @@ svg.physical-layout { font-family: ui-monospace, SFMono-Regular, Consolas, monos
 </g>
 <g class="key keypos-37 " transform="translate(82 220) rotate(0 -52 -156)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
-<text class="tap" x="26" y="26">LGUI</text>
+<text class="tap" x="26" y="26">LEFT_ALT</text>
 </g>
 <g class="key keypos-38 " transform="translate(134 220) rotate(0 -104 -156)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
-<text class="tap" x="26" y="26">LALT</text>
+<text class="tap" x="26" y="26">LEFT_GUI</text>
 </g>
 <g class="key keypos-39 " transform="translate(277 220) rotate(0 -247 -156)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
@@ -196,7 +196,7 @@ svg.physical-layout { font-family: ui-monospace, SFMono-Regular, Consolas, monos
 </g>
 <g class="key keypos-41 " transform="translate(563 233) rotate(0 -533 -169)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
-<text class="tap" x="26" y="20">SPC</text>
+<text class="tap" x="26" y="20">BKSP</text>
 <text class="hold" x="26" y="37">LT FUNC</text>
 </g>
 <g class="key keypos-42 " transform="translate(615 220) rotate(0 -585 -156)">
