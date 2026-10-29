@@ -107,5 +107,20 @@
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
+
+        // Index 6: kept separate so AML timeout never disables manual Mouse (3).
+        auto_mouse_layer {
+            label = "Auto Mouse";
+            bindings = <
+&trans    &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
+&trans    &trans  &trans     &trans    &trans     &trans      &trans  &mkp MB1  &mkp MB3   &mkp MB2   &trans     &trans
+&trans    &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
+&trans    &trans  &trans               &trans     &trans      &trans  &trans               &trans     &trans     &trans
+&kp LEFT  &kp UP  &kp SPACE  &kp DOWN  &kp RIGHT                      &kp HOME  &kp PG_UP  &kp ENTER  &kp PG_DN  &kp END
+                             &kp A                                              &kp B
+            >;
+
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+        };
     };
 };

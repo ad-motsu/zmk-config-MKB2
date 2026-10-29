@@ -1,12 +1,21 @@
 #include <input/processors/runtime-input-processor.dtsi>
 
+// J/K/L clicks and modifiers do not cancel auto mouse mode on key press.
+&zip_temp_layer {
+    require-prior-idle-ms = <150>;
+    excluded-positions = <19 20 21 24 36 37 38>;
+};
+
 / {
     trackball_listener: trackball_listener {
         compatible = "zmk,input-listener";
         status = "okay";
         device = <&trackball_split>;
-        input-processors = <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT|INPUT_TRANSFORM_Y_INVERT)>, 
-                           <&mouse_runtime_input_processor &scroll_runtime_input_processor>;
+        // PMW3610 already inverts Y; only X needs a listener transform.
+        input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
+                           <&mouse_runtime_input_processor &scroll_runtime_input_processor>,
+                           // Auto Mouse is layer 6; manual Mouse remains layer 3.
+                           <&zip_temp_layer 6 700>;
 
         scroll {
             layers = <1>;
@@ -17,7 +26,7 @@
 
         arrow {
             layers = <2>;
-            input-processors = <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT|INPUT_TRANSFORM_Y_INVERT)>, 
+            input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                                <&mouse_runtime_input_processor &scroll_runtime_input_processor>,
                                <&zip_keybind_keys>;
             process-next;
