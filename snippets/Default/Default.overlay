@@ -24,11 +24,13 @@
         compatible = "zmk,input-listener";
         status = "okay";
         device = <&trackball_split>;
-        // PMW3610 already inverts Y; only X needs a listener transform.
+        // Keep sensor orientation before runtime rotation or axis swapping.
         input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                            <&mouse_runtime_input_processor &scroll_runtime_input_processor>,
                            // Auto Mouse is layer 6; manual Mouse remains layer 3.
-                           <&aml_runtime_input_processor>;
+                           <&aml_runtime_input_processor>,
+                           // Reverse only horizontal output after runtime tuning.
+                           <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>;
 
         scroll {
             layers = <1>;
@@ -41,6 +43,7 @@
             layers = <2>;
             input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                                <&mouse_runtime_input_processor &scroll_runtime_input_processor>,
+                               <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                                <&zip_keybind_keys>;
             process-next;
         };
