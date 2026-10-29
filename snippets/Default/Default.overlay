@@ -15,7 +15,7 @@
         input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                            <&mouse_runtime_input_processor &scroll_runtime_input_processor>,
                            // Auto Mouse is layer 6; manual Mouse remains layer 3.
-                           <&zip_temp_layer 6 700>;
+                           <&zip_temp_layer 6 500>;
 
         scroll {
             layers = <1>;
