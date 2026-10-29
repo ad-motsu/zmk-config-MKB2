@@ -207,7 +207,7 @@ svg.physical-layout { font-family: ui-monospace, SFMono-Regular, Consolas, monos
 </g>
 <g class="key keypos-43 " transform="translate(758 220) rotate(0 -728 -156)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
-<text class="tap" x="26" y="26">LEFT</text>
+<text class="tap" x="26" y="26">LG(LS(N5))</text>
 </g>
 <g class="key keypos-44 " transform="translate(810 220) rotate(0 -780 -156)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
