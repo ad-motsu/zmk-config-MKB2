@@ -1265,7 +1265,7 @@ svg.physical-layout { font-family: ui-monospace, SFMono-Regular, Consolas, monos
 </g>
 <g class="key keypos-6 " transform="translate(602 64) rotate(0 -572 0)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
-<text class="tap" x="26" y="26">NON_US_BACKSLASH</text>
+<text class="tap" x="26" y="26">BACKSLASH</text>
 </g>
 <g class="key keypos-7 " transform="translate(654 64) rotate(0 -624 0)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
@@ -1741,7 +1741,7 @@ svg.physical-layout { font-family: ui-monospace, SFMono-Regular, Consolas, monos
 </g>
 <g class="key keypos-6 " transform="translate(602 64) rotate(0 -572 0)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
-<text class="tap" x="26" y="26">INT_YEN</text>
+<text class="tap" x="26" y="26">JP_YEN</text>
 </g>
 <g class="key keypos-7 " transform="translate(654 64) rotate(0 -624 0)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
@@ -1818,7 +1818,7 @@ svg.physical-layout { font-family: ui-monospace, SFMono-Regular, Consolas, monos
 </g>
 <g class="key keypos-25 " transform="translate(82 168) rotate(0 -52 -104)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
-<text class="tap" x="26" y="26">UNDERSCORE</text>
+<text class="tap" x="26" y="26">JP_UNDERSCORE</text>
 </g>
 <g class="key keypos-26 " transform="translate(134 168) rotate(0 -104 -104)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
@@ -1834,7 +1834,7 @@ svg.physical-layout { font-family: ui-monospace, SFMono-Regular, Consolas, monos
 </g>
 <g class="key keypos-29 " transform="translate(290 168) rotate(0 -260 -104)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
-<text class="tap" x="26" y="26">PLUS</text>
+<text class="tap" x="26" y="26">RS(COLON)</text>
 </g>
 <g class="key keypos-30 " transform="translate(602 168) rotate(0 -572 -104)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
