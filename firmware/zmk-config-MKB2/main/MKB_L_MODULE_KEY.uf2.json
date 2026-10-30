@@ -1,11 +1,11 @@
 {
   "artifact": {
     "name": "MKB_L_MODULE_KEY.uf2",
-    "sha256": "38eff87ab39f4ad7885628b388e7a8c853a21bde5e646932e67d354e58f4f646"
+    "sha256": "5618678d7aed087519c25b1dc24af34518303df6c5f5974f56afb5270a970a29"
   },
   "generated": {
-    ".config": "4026d3e17be5f4dc92526a16cadc10451286611f911c460941c42459aa1df1fa",
-    "zephyr.dts": "e46dce589af3b92551b24934eb00ad8c8b92ad3f2d29834ac76f380e41c661c3"
+    ".config": "190ee0e963cb5008c91f8c4e9650bbc8bce38626e6ee3e51e5dc7140c8bd5790",
+    "zephyr.dts": "5319f9bb1f0bbe2ea3e969b91b8eacdcb3f70fc966063ad1f01c17d25e3918e5"
   },
   "inputs": {
     "dependencies": {
@@ -323,7 +323,7 @@
       }
     },
     "source": {
-      "commit": "198dfe03c987135bc13ea2f9a595f4c377c4d092",
+      "commit": "51e8d97572d7beca48a623c68eab22ede15d131e",
       "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "dirty": false,
       "untracked": {}
@@ -335,7 +335,7 @@
       "untracked": {}
     }
   },
-  "run_id": "41006091739",
+  "run_id": "41010972701",
   "schema": 1,
   "target": {
     "artifact-name": "MKB_L_MODULE_KEY",

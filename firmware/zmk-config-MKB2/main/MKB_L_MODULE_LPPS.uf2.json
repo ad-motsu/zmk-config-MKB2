@@ -1,11 +1,11 @@
 {
   "artifact": {
     "name": "MKB_L_MODULE_LPPS.uf2",
-    "sha256": "9270d0e96fe294c7dcb754d589e5f353c947820813894093d73770a7a16bfdca"
+    "sha256": "0e89ddbb4c70922b7789e7678bd789d81db97489aff40486ee82870d9c41b78c"
   },
   "generated": {
-    ".config": "ccdd378490dd1c93ece6e55c74fc98f0c7b612dbf1b6d85ccf58b69a301f1877",
-    "zephyr.dts": "c04e165e424efac7f6602a6024210d08fbcfe5ba863199ec8a27317147cc309e"
+    ".config": "9bf3de18357d35484bf59b261245dddb986c31fde0f0bb2840cec25d956989f6",
+    "zephyr.dts": "d7b89bc9b6e01d69c9ffb4e5b6ea679d6cc4d35950b2a49e0693e6871c81e87c"
   },
   "inputs": {
     "dependencies": {
@@ -323,7 +323,7 @@
       }
     },
     "source": {
-      "commit": "198dfe03c987135bc13ea2f9a595f4c377c4d092",
+      "commit": "51e8d97572d7beca48a623c68eab22ede15d131e",
       "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "dirty": false,
       "untracked": {}
@@ -335,7 +335,7 @@
       "untracked": {}
     }
   },
-  "run_id": "41006091739",
+  "run_id": "41010972701",
   "schema": 1,
   "target": {
     "artifact-name": "MKB_L_MODULE_LPPS",
