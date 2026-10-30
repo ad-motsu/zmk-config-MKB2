@@ -1261,7 +1261,7 @@ svg.physical-layout { font-family: ui-monospace, SFMono-Regular, Consolas, monos
 </g>
 <g class="key keypos-5 " transform="translate(290 64) rotate(0 -260 0)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
-<text class="tap" x="26" y="26">LS(N8)</text>
+<text class="tap" x="26" y="26">ASTERISK</text>
 </g>
 <g class="key keypos-6 " transform="translate(602 64) rotate(0 -572 0)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
@@ -1358,7 +1358,7 @@ svg.physical-layout { font-family: ui-monospace, SFMono-Regular, Consolas, monos
 </g>
 <g class="key keypos-29 " transform="translate(290 168) rotate(0 -260 -104)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
-<text class="tap" x="26" y="26">LS(EQUAL)</text>
+<text class="tap" x="26" y="26">PLUS</text>
 </g>
 <g class="key keypos-30 " transform="translate(602 168) rotate(0 -572 -104)">
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
