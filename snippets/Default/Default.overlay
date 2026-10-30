@@ -2,12 +2,12 @@
 
 / {
     // Separate runtime AML from mouse tuning used by the arrow override.
-    // AML now activates the ordinary Mouse layer (3). The label is aml_mouse (not "aml")
+    // AML now activates the ordinary Mouse layer (3). The label is aml3 (not "aml")
     // so a target saved by Studio under the old "aml" label (layer 6) cannot override it.
     // Layer 6 (Auto Mouse) is left unused for compatibility with saved keymap settings.
     aml_runtime_input_processor: aml_runtime_input_processor {
         compatible = "zmk,input-processor-runtime";
-        processor-label = "aml_mouse";
+        processor-label = "aml3";
         #input-processor-cells = <0>;
         type = <INPUT_EV_REL>;
         x-codes = <INPUT_REL_X>;

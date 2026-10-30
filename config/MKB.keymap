@@ -74,12 +74,12 @@
         };
 
         // Only sets the keep flag of the AML processor; it does not activate any layer.
-        // Needs the runtime input processor labelled aml_mouse (snippets/Default/Default.overlay).
+        // Needs the runtime input processor labelled aml3 (snippets/Default/Default.overlay).
         keep_aml_mouse: keep_aml_mouse {
             compatible = "zmk,behavior-input-processor-temp-layer-keep-active";
             #binding-cells = <0>;
             display-name = "Keep AML Mouse";
-            processor-name = "aml_mouse";
+            processor-name = "aml3";
         };
     };
 
@@ -220,7 +220,7 @@
         };
 
         // Index 6: legacy Auto Mouse slot, no longer used. AML now targets the ordinary Mouse (3)
-        // (runtime processor "aml_mouse"). Left in place so saved Studio settings for index 6
+        // (runtime processor "aml3"). Left in place so saved Studio settings for index 6
         // never end up on a different layer.
 
         auto_mouse_layer {
