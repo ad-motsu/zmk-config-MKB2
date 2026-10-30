@@ -26,10 +26,14 @@
 #define SCROLL 8
 #define BT 9
 #define EXCEL 10
-#define JP_YEN          0x89
-#define JP_TILDE    　　LS(JP_CARET)
-#define JP_BACKQUOTE    LEFT_BRACE
-#define JP_UNDERSCORE   LS(0x87)
+
+// Aliases for &kp. These are US semantic inputs (the layout shift converts them once for the JIS
+// OS), not raw JIS physical codes.
+
+#define JP_YEN          INT_YEN
+#define JP_TILDE        TILDE
+#define JP_BACKQUOTE    GRAVE
+#define JP_UNDERSCORE   UNDERSCORE
 
 &mt {
     flavor = "balanced";
@@ -77,7 +81,8 @@
 
 / {
     behaviors {
-        // Mouse wheel on the encoder: &encoder_msc_scroll <cw> <ccw>, e.g. SCRL_DOWN SCRL_UP.
+        // Mouse wheel on the encoder: &encoder_msc_scroll <cw> <ccw>. The LiNEA40 values were the
+        // initial reference; the Mac / iPad / WinJIS directions were then reversed for the user.
 
         encoder_msc_scroll: encoder_msc_scroll {
             compatible = "zmk,behavior-sensor-rotate-var";
@@ -171,7 +176,7 @@
             >;
 
             sensor-bindings =
-                <&encoder_msc_scroll SCRL_DOWN SCRL_UP>,
+                <&encoder_msc_scroll SCRL_UP SCRL_DOWN>,
                 <&inc_dec_kp PG_UP PG_DN>;
         };
 
@@ -190,7 +195,7 @@
             >;
 
             sensor-bindings =
-                <&encoder_msc_scroll SCRL_UP SCRL_DOWN>,
+                <&encoder_msc_scroll SCRL_DOWN SCRL_UP>,
                 <&inc_dec_kp PG_UP PG_DN>;
         };
 
@@ -212,7 +217,7 @@
             >;
 
             sensor-bindings =
-                <&encoder_msc_scroll SCRL_DOWN SCRL_UP>,
+                <&encoder_msc_scroll SCRL_UP SCRL_DOWN>,
                 <&inc_dec_kp PG_UP PG_DN>;
         };
 
@@ -306,16 +311,16 @@
         // symbol that produces the same character on a JIS OS (translated once, never twice):
         // raw LEFT_BRACKET = @, EQUAL = ^, CARET = &, RS(COLON) = +, PLUS = ~, AT_SIGN = ".
         // The digits are keypad digits, so Windows needs NumLock on: KP_NUMLOCK is at position 0.
-        // Outer keys: 0 NumLock, 11 {, 12 Hankaku/Zenkaku, 23 }. Caret is in the core (position 20).
-        // The "~" key moved from the old JNum position 43 to 44, the pipe to 43.
+        // Outer keys: 0 NumLock, 12 Hankaku/Zenkaku; 11 / 23 / 45 are transparent. Caret is in the
+        // core (position 20). Braces are Shift+[ and Shift+]. Bottom row: 43 ~, 44 ".
 
         jis_num_layer {
             label = "NumWin";
             bindings = <
-&kp KP_NUMLOCK   &kp SLASH          &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp ASTERISK       &kp JP_YEN      &kp EXCLAMATION  &kp LEFT_BRACKET   &kp HASH   &kp DOLLAR     &trans
-&kp LANGUAGE_5   &kp COLON          &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp MINUS          &kp LEFT_BRACE  &kp PERCENT      &kp EQUAL          &kp LCTRL  &kp SEMICOLON  &trans
-&mt LSHFT SPACE  &kp JP_UNDERSCORE  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp RS(COLON)      &kp RS(N8)      &kp RS(N9)       &kp RIGHT_BRACKET  &kp BSLH   &kp AMPERSAND  &trans
-&kp PERIOD       &kp PERIOD         &kp KP_NUMBER_0                   &kp EQUAL        &trans             &trans          &trans                              &kp PLUS   &kp AT_SIGN    &trans
+&kp KP_NUMLOCK   &kp SLASH          &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp ASTERISK  &kp INT_YEN  &kp EXCLAMATION       &kp AT_SIGN        &kp HASH           &kp DOLLAR        &trans
+&kp LANGUAGE_5   &kp COLON          &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp MINUS     &kp GRAVE    &kp PERCENT           &kp CARET          &kp LCTRL          &kp SEMICOLON     &trans
+&mt LSHFT SPACE  &kp UNDERSCORE     &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp PLUS      &kp LEFT_PARENTHESIS  &kp RIGHT_PARENTHESIS  &kp LEFT_BRACKET  &kp RIGHT_BRACKET  &kp SQT  &trans
+&kp PERIOD       &kp PERIOD         &kp KP_NUMBER_0                   &kp EQUAL        &trans        &trans       &trans                                   &kp TILDE          &kp DOUBLE_QUOTES  &trans
 &kp LEFT         &kp UP             &kp SPACE        &kp DOWN         &kp RIGHT                                           &kp HOME         &kp PG_UP          &kp ENTER  &kp PG_DN      &kp END
                                                      &kp A                                                                                 &kp B
             >;

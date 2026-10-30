@@ -44,9 +44,11 @@
                            <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>;
 
         // Scroll (8): ball scrolls and never triggers AML.
+        // The first transform also inverts Y, so the ball scrolls vertically in the opposite
+        // direction; horizontal scrolling is unchanged.
         scroll {
             layers = <8>;
-            input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
+            input-processors = <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>,
                                <&zip_xy_to_scroll_mapper>, 
                                <&scroll_runtime_input_processor>;
         };
