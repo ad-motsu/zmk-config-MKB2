@@ -1,0 +1,92 @@
+// US -> JIS layout shift map for an OS configured with a JIS keyboard layout.
+//
+// Adapted from layout_shift_maps.dtsi (layout_shift_map_us_to_jis) of zmk-layout-shift v2
+// (kot149/zmk-layout-shift, commit c242c13c9c5a6100b3980b8c725c734c368670de).
+// Upstream Copyright (c) 2024 The ZMK Contributors
+// SPDX-License-Identifier: MIT
+//
+// MIT License
+//
+// Copyright (c) 2024 The ZMK Contributors
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+// zmk-layout-shift v2 (c242c13) still ships raw LS(0x87) / 0x89 / LS(0x89) outputs
+// for underscore, backslash and pipe. Those omit the keyboard HID usage page and are
+// dropped before they reach the host. This map keeps every other upstream mapping and
+// replaces only those three outputs with full keyboard-page usages (INT_RO / INT_YEN).
+//
+// Upstream matches the required (non-optional) modifier bits exactly, and its shifted
+// entries use only LS(...) as the source. A right Shift (or both Shifts) therefore never
+// matched, e.g. right Shift + MINUS fell through and produced '=' on a JIS OS. Shift must
+// not become optional, because shifted and unshifted entries (EQUAL / PLUS, ...) have to
+// stay distinct. Instead, each of the 14 shifted logical mappings is expanded into three
+// disjoint sources: left Shift only, right Shift only, and both Shifts. All three produce
+// the same target with the same optional Ctrl / Alt / GUI flags. The 6 unshifted mappings
+// stay as they are, so the 20 upstream logical mappings become 6 + 14 * 3 = 48 entries.
+// When an unmatched Shift is held, the module masks it according to the target modifiers,
+// so the target (not the physical Shift side) decides which Shift reaches the host.
+//
+// Included from MKB.keymap. layout_shift.dtsi is included here as well so the node
+// labels exist even if Keymap Editor reorders the includes of the keymap.
+
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/layout_shift.h>
+#include <layout_shift.dtsi>
+
+#define MKB_JIS_OPT (LAYOUT_SHIFT_OPTIONAL_CTRL | LAYOUT_SHIFT_OPTIONAL_ALT | LAYOUT_SHIFT_OPTIONAL_GUI)
+
+// from_base is the unshifted key of the upstream shifted source (e.g. N6 for CARET).
+#define MKB_JIS_SHIFTED(from_base, to) \
+    LS(from_base)     to MKB_JIS_OPT \
+    RS(from_base)     to MKB_JIS_OPT \
+    LS(RS(from_base)) to MKB_JIS_OPT
+
+&layout_shift_map_us_to_jis {
+    mappings = <
+        // Unshifted sources (6)
+        EQUAL              UNDERSCORE         MKB_JIS_OPT
+        GRAVE              LEFT_BRACE         MKB_JIS_OPT
+        LEFT_BRACKET       RIGHT_BRACKET      MKB_JIS_OPT
+        RIGHT_BRACKET      BACKSLASH          MKB_JIS_OPT
+        SINGLE_QUOTE       AMPERSAND          MKB_JIS_OPT
+        BACKSLASH          INT_YEN            MKB_JIS_OPT
+
+        // Shifted sources (14 logical x 3 Shift variants); comment shows the upstream source
+        MKB_JIS_SHIFTED(N6,            EQUAL)              // CARET
+        MKB_JIS_SHIFTED(GRAVE,         PLUS)               // TILDE
+        MKB_JIS_SHIFTED(N2,            LEFT_BRACKET)       // AT_SIGN
+        MKB_JIS_SHIFTED(LEFT_BRACKET,  RIGHT_BRACE)        // LEFT_BRACE
+        MKB_JIS_SHIFTED(RIGHT_BRACKET, PIPE)               // RIGHT_BRACE
+        MKB_JIS_SHIFTED(EQUAL,         COLON)              // PLUS
+        MKB_JIS_SHIFTED(SEMICOLON,     SINGLE_QUOTE)       // COLON
+        MKB_JIS_SHIFTED(N8,            DOUBLE_QUOTES)      // ASTERISK
+        MKB_JIS_SHIFTED(SINGLE_QUOTE,  AT_SIGN)            // DOUBLE_QUOTES
+        MKB_JIS_SHIFTED(N7,            CARET)              // AMPERSAND
+        MKB_JIS_SHIFTED(N9,            ASTERISK)           // LEFT_PARENTHESIS
+        MKB_JIS_SHIFTED(N0,            LEFT_PARENTHESIS)   // RIGHT_PARENTHESIS
+        MKB_JIS_SHIFTED(MINUS,         LS(INT_RO))         // UNDERSCORE
+        MKB_JIS_SHIFTED(BACKSLASH,     LS(INT_YEN))        // PIPE
+    >;
+};
+
+// Only the US -> JIS conversion is switched; Dvorak and Ctrl/Cmd swap stay unused.
+&tog_ls { layout-maps = <&layout_shift_map_us_to_jis>; };
+&tog_ls_on { layout-maps = <&layout_shift_map_us_to_jis>; };
+&tog_ls_off { layout-maps = <&layout_shift_map_us_to_jis>; };

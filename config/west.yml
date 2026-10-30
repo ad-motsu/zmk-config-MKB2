@@ -36,7 +36,7 @@ manifest:
       revision: 472c6cacd741a4e400dc7e3e36067a4564162cc9
     - name: zmk-layout-shift
       remote: kot149
-      revision: 4d71f7cb743256ac619873dd44f510e9e9562739
+      revision: c242c13c9c5a6100b3980b8c725c734c368670de
     - name: zmk-input-processor-keybind
       remote: te9no
       revision: 10ad463f2e3c7a7dfb4b7cffd6bddd0e9e8b5bae

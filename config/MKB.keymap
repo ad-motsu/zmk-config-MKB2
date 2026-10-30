@@ -1,10 +1,11 @@
-// #include <layout_shift.dtsi>
+// Wheel speed for &msc SCRL_UP / SCRL_DOWN. Must be defined before every include.
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 80
 
-#include <layout_shift_kp_override.dtsi>
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/pointing.h>
+#include "MKB_jis.dtsi"
 
 #define DEF 0
 #define FUNC 1
@@ -12,12 +13,112 @@
 #define MOUSE 3
 #define SCROLL 4
 #define BT 5
+// Index 6 (Auto Mouse) is kept as an unused legacy slot; the JIS profile is appended after it.
+#define JIS 7
+#define JIS_FUNC 8
+#define JIS_NUM 9
 
 &mt {
     flavor = "balanced";
     tapping-term-ms = <280>;
     quick-tap-ms = <175>;
     require-prior-idle-ms = <150>;
+};
+
+// Layout-aware &kp (zmk-layout-shift v2 override), copied here so it comes after behaviors.dtsi
+// and keeps working when Keymap Editor reorders the includes. The label property must stay
+// identical to the kpls node: behavior lookup is by that shared label, so the single driver
+// instance answers for both.
+/ {
+    behaviors {
+        original_key_press: original_key_press {
+            compatible = "zmk,behavior-key-press";
+            #binding-cells = <1>;
+            label = "KEY_PRESS";
+        };
+
+        kp: key_press {
+            compatible = "zmk,behavior-layout-shift-key-press";
+            #binding-cells = <1>;
+            label = "LAYOUT_SHIFT_KEY_PRESS";
+            display-name = "Key Press";
+        };
+    };
+};
+
+// The driver defines a single instance, so only &kp may stay enabled: the runtime input processor
+// takes DEVICE_DT_GET(&kp). mtls is a separate hold-tap; its keypress bindings are resolved
+// through the shared label property, not through the same DT node.
+&kpls {
+    status = "disabled";
+};
+
+/ {
+    behaviors {
+        // Mouse wheel on the encoder. Clockwise scrolls down, as the former K_SCROLL_DOWN did.
+        encoder_msc_scroll: encoder_msc_scroll {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            display-name = "Encoder Wheel Scroll";
+            bindings = <&msc SCRL_DOWN>, <&msc SCRL_UP>;
+            tap-ms = <20>;
+        };
+
+        // Same timing as &lt. Holding enables Mouse (3) and protects it from the AML timeout.
+        lt_mouse_keep: lt_mouse_keep {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            display-name = "Mouse Layer-Tap (AML guard)";
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            bindings = <&mouse_hold_keep>, <&kp>;
+        };
+
+        // Only sets the keep flag of the AML processor; it does not activate any layer.
+        // Needs the runtime input processor labelled aml_mouse (snippets/Default/Default.overlay).
+        keep_aml_mouse: keep_aml_mouse {
+            compatible = "zmk,behavior-input-processor-temp-layer-keep-active";
+            #binding-cells = <0>;
+            display-name = "Keep AML Mouse";
+            processor-name = "aml_mouse";
+        };
+    };
+
+    macros {
+        // Keep flag first (only sets the flag, does not activate a layer), then the layer.
+        // Released in the opposite order; after the release the keep flag is cleared and normal AML resumes.
+        mouse_hold_keep: mouse_hold_keep {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            display-name = "Mouse Hold (keep AML)";
+            wait-ms = <0>;
+            tap-ms = <0>;
+            bindings = <
+                &macro_press
+                &keep_aml_mouse
+                &macro_param_1to1 &mo 0
+                &macro_pause_for_release
+                &macro_release
+                &macro_param_1to1 &mo 0
+                &keep_aml_mouse
+            >;
+        };
+
+        // Profile selectors for the BT layer: conversion state and base layer change together.
+        profile_current: profile_current {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            display-name = "Profile: Current";
+            bindings = <&tog_ls_off &to DEF>;
+        };
+
+        profile_jis: profile_jis {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            display-name = "Profile: JIS";
+            bindings = <&tog_ls_on &to JIS>;
+        };
+    };
 };
 
 / {
@@ -28,7 +129,7 @@
             label = "Def";
             bindings = <
 &kp ESCAPE    &kp Q         &kp W                    &kp E     &kp R        &kp T                 &kp Y               &kp U          &kp I      &kp O           &kp P      &kp DELETE
-&kp TAB       &kp A         &kp S                    &kp D     &kp F        &kp G                 &kp H               &kp J          &lt 4 K    &kp L           &kp SEMI   &lt MOUSE MINUS
+&kp TAB       &kp A         &kp S                    &kp D     &kp F        &kp G                 &kp H               &kp J          &lt 4 K    &kp L           &kp SEMI   &lt_mouse_keep MOUSE MINUS
 &kp LSHFT     &kp Z         &kp X                    &kp C     &kp V        &kp B                 &kp N               &kp M          &kp COMMA  &kp DOT         &kp SLASH  &mt RIGHT_SHIFT SQT
 &mt LCTL ESC  &kp LEFT_ALT  &mt LEFT_GUI LANGUAGE_2            &lt 1 SPACE  &lt 4 LANGUAGE_1      &lt FUNC BACKSPACE  &lt NUM ENTER             &kp LG(LS(N5))  &kp RCTRL  &lt 5 GRAVE
 &kp LEFT      &kp UP        &kp SPACE                &kp DOWN  &kp RIGHT                                              &kp HOME       &kp PG_UP  &kp ENTER       &kp PG_DN  &kp END
@@ -36,7 +137,7 @@
             >;
 
             sensor-bindings =
-                <&inc_dec_kp K_SCROLL_DOWN K_SCROLL_UP>,
+                <&encoder_msc_scroll>,
                 <&inc_dec_kp PG_UP PG_DN>;
         };
 
@@ -72,16 +173,21 @@
 
         mouse_layer {
             label = "Mouse";
+            // Also the AML target. The runtime keeps this layer on a key press only if its own
+            // binding at that position is non-transparent, so the base mod-taps are repeated here
+            // (positions 35, 36, 38) to preserve modifier-clicks. Keep them in sync with the base.
             bindings = <
-&trans    &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
-&trans    &trans  &trans     &trans    &trans     &trans      &trans  &mkp MB1  &trans     &mkp MB2   &mkp MB3   &trans
-&trans    &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
-&trans    &trans  &trans               &trans     &trans      &trans  &trans               &trans     &trans     &trans
-&kp LEFT  &kp UP  &kp SPACE  &kp DOWN  &kp RIGHT                      &kp HOME  &kp PG_UP  &kp ENTER  &kp PG_DN  &kp END
-                             &kp A                                              &kp B
+&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
+&trans        &trans  &trans     &trans    &trans     &trans      &trans  &mkp MB1  &trans     &mkp MB2   &mkp MB3   &trans
+&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &mt RIGHT_SHIFT SQT
+&mt LCTL ESC  &trans  &mt LEFT_GUI LANGUAGE_2        &trans     &trans      &trans  &trans               &trans     &trans     &trans
+&kp LEFT      &kp UP  &kp SPACE  &kp DOWN  &kp RIGHT                      &kp HOME  &kp PG_UP  &kp ENTER  &kp PG_DN  &kp END
+                                 &kp A                                              &kp B
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings =
+                <&encoder_msc_scroll>,
+                <&inc_dec_kp PG_UP PG_DN>;
         };
 
         scroll_layer {
@@ -95,14 +201,16 @@
                              &kp A                                              &kp B
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings =
+                <&encoder_msc_scroll>,
+                <&inc_dec_kp PG_UP PG_DN>;
         };
 
         bt_layer {
             label = "BT";
             bindings = <
 &bt BT_CLR  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4      &bt BT_CLR_ALL  &studio_unlock  &trans     &trans     &trans     &trans
-&trans      &trans        &trans        &trans        &trans        &trans            &trans          &trans          &trans     &trans     &trans     &trans
+&trans      &trans        &trans        &trans        &trans        &trans            &profile_current  &profile_jis  &trans     &trans     &trans     &trans
 &trans      &trans        &trans        &trans        &trans        &trans            &trans          &trans          &trans     &trans     &trans     &trans
 &trans      &trans        &trans                      &trans        &trans            &trans          &trans                     &trans     &trans     &trans
 &kp LEFT    &kp UP        &kp SPACE     &kp DOWN      &kp RIGHT                                       &kp HOME        &kp PG_UP  &kp ENTER  &kp PG_DN  &kp END
@@ -112,8 +220,9 @@
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
 
-        // Index 6: kept separate so AML timeout never disables manual Mouse (3).
-        // Repeat base Ctrl/Esc so runtime AML preserves Ctrl-click on this mod-tap.
+        // Index 6: legacy Auto Mouse slot, no longer used. AML now targets the ordinary Mouse (3)
+        // (runtime processor "aml_mouse"). Left in place so saved Studio settings for index 6
+        // never end up on a different layer.
 
         auto_mouse_layer {
             label = "Auto Mouse";
@@ -127,6 +236,55 @@
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+        };
+
+        // ---- JIS profile (Windows, OS set to a JIS keyboard layout). Selected from the BT layer. ----
+        // Layers 7-9 sit above Mouse (3) and BT (5). Layer 7 is sparse on purpose: everything it
+        // leaves transparent (Mouse clicks, manual Mouse key, BT keys, profile selectors, BT hold)
+        // keeps working. It has no sensor-bindings, so the encoder follows Default/Mouse/Scroll/BT.
+        // &to 7 leaves layer 0 active underneath.
+
+        jis_layer {
+            label = "JIS";
+            bindings = <
+&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
+&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
+&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
+&mt LEFT_GUI ESC  &trans  &mt LCTRL INT_MUHENKAN  &lt JIS_FUNC SPACE  &lt SCROLL INT_HENKAN  &lt JIS_FUNC BACKSPACE  &lt JIS_NUM ENTER  &kp LS(LG(S))  &trans  &trans
+&trans        &trans  &trans     &trans    &trans                          &trans    &trans     &trans     &trans     &trans
+                                 &trans                                             &trans
+            >;
+        };
+
+        jis_function_layer {
+            label = "JFnc";
+            bindings = <
+&trans    &kp F1   &kp F2                    &kp F3         &kp F4                    &kp F5         &kp F6     &kp F7          &kp F8          &kp F9                &kp F10           &trans
+&trans    &kp F11  &kp LG(LC(LEFT_ARROW))    &kp PAGE_UP    &kp LC(LG(RIGHT_ARROW))   &kp HOME       &kp LC(C)  &mkp MB1        &kp UP_ARROW    &mkp MB2              &mkp MB3          &trans
+&trans    &kp F12  &kp LG(LEFT)              &kp PAGE_DOWN  &kp LG(RIGHT_ARROW)       &kp END        &kp LC(V)  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT             &kp RG(TAB)       &trans
+&trans    &trans   &kp LALT                                 &kp ENTER                 &kp ENTER      &kp ENTER  &kp ENTER                       &kp LG(PRINTSCREEN)   &kp APPLY_MODS(MOD_RCTL, SPACE)     &trans
+&kp LEFT  &kp UP   &kp SPACE                 &kp DOWN       &kp RIGHT                                           &kp HOME        &kp PG_UP       &kp ENTER             &kp PG_DN         &kp END
+                                             &kp A                                                                              &kp B
+            >;
+
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+        };
+
+        // US symbol names go through &kp once; the layout shift converts them for the JIS OS.
+        jis_num_layer {
+            label = "JNum";
+            bindings = <
+&kp CARET        &kp SLASH  &kp NUMBER_7  &kp N8        &kp N9        &kp LS(N8)         &kp INT_YEN           &kp EXCLAMATION        &kp AT_SIGN       &kp HASH           &kp DOLLAR         &trans
+&kp LANGUAGE_5   &kp COLON  &kp NUMBER_4  &kp N5        &kp NUMBER_6  &kp MINUS          &kp GRAVE             &kp PERCENT            &kp LCTRL         &kp AMPS           &kp SEMICOLON      &trans
+&mt LSHFT SPACE  &kp UNDER  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &kp LS(EQUAL)      &kp LEFT_PARENTHESIS  &kp RIGHT_PARENTHESIS  &kp LEFT_BRACKET  &kp RIGHT_BRACKET  &kp SQT            &trans
+&kp PIPE         &kp LEFT_BRACE  &kp N0                &kp EQUAL     &kp ENTER          &kp RIGHT_BRACE       &kp ENTER                                &kp TILDE          &kp DOUBLE_QUOTES  &trans
+&kp LEFT         &kp UP     &kp SPACE     &kp DOWN      &kp RIGHT                                              &kp HOME               &kp PG_UP         &kp ENTER          &kp PG_DN          &kp END
+                                          &kp A                                                                                       &kp B
+            >;
+
+            sensor-bindings =
+                <&inc_dec_kp C_VOL_DN C_VOL_UP>,
+                <&inc_dec_kp PG_UP PG_DN>;
         };
     };
 };

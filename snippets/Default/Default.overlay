@@ -2,16 +2,19 @@
 
 / {
     // Separate runtime AML from mouse tuning used by the arrow override.
+    // AML now activates the ordinary Mouse layer (3). The label is aml_mouse (not "aml")
+    // so a target saved by Studio under the old "aml" label (layer 6) cannot override it.
+    // Layer 6 (Auto Mouse) is left unused for compatibility with saved keymap settings.
     aml_runtime_input_processor: aml_runtime_input_processor {
         compatible = "zmk,input-processor-runtime";
-        processor-label = "aml";
+        processor-label = "aml_mouse";
         #input-processor-cells = <0>;
         type = <INPUT_EV_REL>;
         x-codes = <INPUT_REL_X>;
         y-codes = <INPUT_REL_Y>;
 
         temp-layer-enabled;
-        temp-layer = <6>;
+        temp-layer = <3>;
         temp-layer-activation-delay-ms = <150>;
         temp-layer-deactivation-delay-ms = <500>;
         temp-layer-transparent-behavior = <&trans>;
@@ -27,20 +30,22 @@
         // Keep sensor orientation before runtime rotation or axis swapping.
         input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                            <&mouse_runtime_input_processor &scroll_runtime_input_processor>,
-                           // Auto Mouse is layer 6; manual Mouse remains layer 3.
+                           // AML activates Mouse (3); layer 6 is an unused legacy slot.
                            <&aml_runtime_input_processor>,
                            // Reverse only horizontal output after runtime tuning.
                            <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>;
 
+        // Fn (1), Scroll (4) and JIS Fn (8): ball scrolls and never triggers AML.
         scroll {
-            layers = <1>;
+            layers = <1 4 8>;
             input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>, 
                                <&zip_xy_to_scroll_mapper>, 
                                <&scroll_runtime_input_processor>;
         };
 
+        // Num (2) and JIS Num (9): ball emits arrow keys, no cursor motion, no AML.
         arrow {
-            layers = <2>;
+            layers = <2 9>;
             input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                                <&mouse_runtime_input_processor &scroll_runtime_input_processor>,
                                <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
@@ -49,7 +54,7 @@
         };
         
         arrow-prevent-move {
-            layers = <2>;
+            layers = <2 9>;
             input-processors = <&zip_xy_scaler 0 1>;
         };
     };
