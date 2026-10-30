@@ -265,12 +265,12 @@
         num_layer {
             label = "Num";
             bindings = <
-&kp CAPS         &kp SLASH  &kp NUMBER_7  &kp N8        &kp N9        &kp LS(N8)         &kp BACKSLASH         &kp EXCLAMATION        &kp AT_SIGN       &kp HASH           &kp DOLLAR         &trans
-&trans           &kp COLON  &kp NUMBER_4  &kp N5        &kp NUMBER_6  &kp MINUS          &kp GRAVE             &kp PERCENT            &kp LCTRL         &kp AMPS           &kp SEMICOLON      &trans
-&mt LSHFT SPACE  &kp UNDER  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &kp LS(EQUAL)      &kp LEFT_PARENTHESIS  &kp RIGHT_PARENTHESIS  &kp LEFT_BRACKET  &kp RIGHT_BRACKET  &kp SQT            &trans
-&trans           &kp ENTER  &kp N0                      &kp EQUAL     &kp ENTER          &kp ENTER             &kp ENTER                                &kp RS(GRAVE)      &kp DOUBLE_QUOTES  &trans
-&kp LEFT         &kp UP     &kp SPACE     &kp DOWN      &kp RIGHT                                              &kp HOME               &kp PG_UP         &kp ENTER          &kp PG_DN          &kp END
-                                          &kp A                                                                                       &kp B
+&kp CAPS         &kp SLASH  &kp NUMBER_7  &kp N8        &kp N9        &kp ASTERISK      &kp BACKSLASH         &kp EXCLAMATION        &kp AT_SIGN       &kp HASH           &kp DOLLAR         &trans
+&trans           &kp COLON  &kp NUMBER_4  &kp N5        &kp NUMBER_6  &kp MINUS         &kp GRAVE             &kp PERCENT            &kp LCTRL         &kp AMPS           &kp SEMICOLON      &trans
+&mt LSHFT SPACE  &kp UNDER  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &kp PLUS          &kp LEFT_PARENTHESIS  &kp RIGHT_PARENTHESIS  &kp LEFT_BRACKET  &kp RIGHT_BRACKET  &kp SQT            &trans
+&trans           &kp ENTER  &kp N0                      &kp EQUAL     &kp ENTER         &kp ENTER             &kp ENTER                                &kp RS(GRAVE)      &kp DOUBLE_QUOTES  &trans
+&kp LEFT         &kp UP     &kp SPACE     &kp DOWN      &kp RIGHT                                             &kp HOME               &kp PG_UP         &kp ENTER          &kp PG_DN          &kp END
+                                          &kp A                                                                                      &kp B
             >;
 
             sensor-bindings =
@@ -312,12 +312,12 @@
         jis_num_layer {
             label = "NumWin";
             bindings = <
-&kp KP_NUMLOCK   &kp SLASH       &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp ASTERISK      &kp JP_YEN     &kp EXCLAMATION  &kp LEFT_BRACKET   &kp HASH   &kp DOLLAR     &trans
-&kp LANGUAGE_5   &kp COLON       &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp MINUS         &kp LEFT_BRACE  &kp PERCENT      &kp EQUAL          &kp LCTRL  &kp SEMICOLON  &trans
-&mt LSHFT SPACE  &kp JP_UNDERSCORE  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp RS(COLON)          &kp RS(N8)      &kp RS(N9)       &kp RIGHT_BRACKET  &kp BSLH   &kp AMPERSAND  &trans
-&kp PERIOD       &kp PERIOD      &kp KP_NUMBER_0                   &kp EQUAL        &trans            &trans          &trans                              &kp PLUS   &kp AT_SIGN    &trans
-&kp LEFT         &kp UP          &kp SPACE        &kp DOWN         &kp RIGHT                                          &kp HOME         &kp PG_UP          &kp ENTER  &kp PG_DN      &kp END
-                                                  &kp A                                                                                &kp B
+&kp KP_NUMLOCK   &kp SLASH          &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp ASTERISK       &kp JP_YEN      &kp EXCLAMATION  &kp LEFT_BRACKET   &kp HASH   &kp DOLLAR     &trans
+&kp LANGUAGE_5   &kp COLON          &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp MINUS          &kp LEFT_BRACE  &kp PERCENT      &kp EQUAL          &kp LCTRL  &kp SEMICOLON  &trans
+&mt LSHFT SPACE  &kp JP_UNDERSCORE  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp RS(COLON)      &kp RS(N8)      &kp RS(N9)       &kp RIGHT_BRACKET  &kp BSLH   &kp AMPERSAND  &trans
+&kp PERIOD       &kp PERIOD         &kp KP_NUMBER_0                   &kp EQUAL        &trans             &trans          &trans                              &kp PLUS   &kp AT_SIGN    &trans
+&kp LEFT         &kp UP             &kp SPACE        &kp DOWN         &kp RIGHT                                           &kp HOME         &kp PG_UP          &kp ENTER  &kp PG_DN      &kp END
+                                                     &kp A                                                                                 &kp B
             >;
 
             sensor-bindings =
