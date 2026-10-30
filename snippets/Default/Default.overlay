@@ -35,12 +35,23 @@
                            // Reverse only horizontal output after runtime tuning.
                            <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>;
 
-        // Fn (1), Scroll (4) and JIS Fn (8): ball scrolls and never triggers AML.
+        // Scroll (4): ball scrolls and never triggers AML.
         scroll {
-            layers = <1 4 8>;
+            layers = <4>;
             input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>, 
                                <&zip_xy_to_scroll_mapper>, 
                                <&scroll_runtime_input_processor>;
+        };
+
+        // Fn (1) and JIS Fn (8): half-speed cursor. Placed after scroll so Scr (4) wins if both
+        // are held, and before the Num overrides. AML is omitted so Mouse (3) cannot rise above
+        // Fn. The scaler is last so it halves relative X/Y after the saved runtime tuning.
+        precision {
+            layers = <1 8>;
+            input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
+                               <&mouse_runtime_input_processor &scroll_runtime_input_processor>,
+                               <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
+                               <&zip_xy_scaler 1 2>;
         };
 
         // Num (2) and JIS Num (9): ball emits arrow keys, no cursor motion, no AML.
