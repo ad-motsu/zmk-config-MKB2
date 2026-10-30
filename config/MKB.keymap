@@ -45,8 +45,8 @@
             bindings = <
 &trans    &kp F1   &kp F2              &kp F3         &kp F4             &kp F5         &kp F6     &kp F7          &kp F8          &kp F9                &kp F10           &trans
 &trans    &kp F11  &kp LC(LEFT_ARROW)  &kp PAGE_UP    &kp LC(RIGHT)      &kp HOME       &kp LG(C)  &mkp MB1        &kp UP_ARROW    &mkp MB2              &mkp MB3          &trans
-&trans    &kp F12  &kp LA(LG(LEFT))    &kp PAGE_DOWN  &kp LA(LG(RIGHT))  &kp END        &kp LG(V)  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT             &kp RC(UP_ARROW)  &trans
-&trans    &trans   &kp LALT                           &kp ENTER          &kp ENTER      &kp ENTER  &kp ENTER                       &kp RS(RG(NUMBER_4))  &kp RC(SPACE)     &trans
+&trans    &kp F12  &kp LA(LG(LEFT))    &kp PAGE_DOWN  &kp LA(LG(RIGHT))  &kp END        &kp LG(V)  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT             &kp APPLY_MODS(MOD_RCTL, UP_ARROW)  &trans
+&trans    &trans   &kp LALT                           &kp ENTER          &kp ENTER      &kp ENTER  &kp ENTER                       &kp RS(RG(NUMBER_4))  &kp APPLY_MODS(MOD_RCTL, SPACE)     &trans
 &kp LEFT  &kp UP   &kp SPACE           &kp DOWN       &kp RIGHT                                    &kp HOME        &kp PG_UP       &kp ENTER             &kp PG_DN         &kp END
                                        &kp A                                                                       &kp B
             >;
