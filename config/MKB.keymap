@@ -1,5 +1,5 @@
 // Wheel speed for &msc SCRL_UP / SCRL_DOWN. Must be defined before every include.
-#define ZMK_POINTING_DEFAULT_SCRL_VAL 80
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 150
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
@@ -9,22 +9,33 @@
 // Must stay after the JIS/key/board headers: it redefines RC for both matrix and modifier use.
 #include "MKB_modifiers.h"
 
+// Layer order follows LiNEA40. These stay plain single-level numeric defines in this file
+// (not in an include) so Keymap Editor can resolve them.
 #define DEF 0
-#define FUNC 1
-#define NUM 2
+#define IPAD 1
+#define JIS 2
 #define MOUSE 3
-#define SCROLL 4
-#define BT 5
-// Index 6 (Auto Mouse) is kept as an unused legacy slot; the JIS profile is appended after it.
-#define JIS 7
-#define JIS_FUNC 8
-#define JIS_NUM 9
+#define FUNC 4
+#define NUM 5
+#define JIS_FUNC 6
+#define JIS_NUM 7
+#define SCROLL 8
+#define BT 9
+#define EXCEL 10
 
 &mt {
     flavor = "balanced";
     tapping-term-ms = <280>;
     quick-tap-ms = <175>;
     require-prior-idle-ms = <150>;
+};
+
+// Mouse wheel timing used by the encoder (same values as LiNEA40).
+&msc {
+    delay-ms = <3>;
+    trigger-period-ms = <3>;
+    time-to-max-speed-ms = <100>;
+    acceleration-exponent = <0>;
 };
 
 // Layout-aware &kp (zmk-layout-shift v2 override), copied here so it comes after behaviors.dtsi
@@ -48,20 +59,20 @@
     };
 };
 
-// The driver defines a single instance, so only &kp may stay enabled: the runtime input processor
-// takes DEVICE_DT_GET(&kp). mtls is a separate hold-tap; its keypress bindings are resolved
-// through the shared label property, not through the same DT node.
+// The driver defines a single instance, so only &kp may stay enabled. mtls is a separate
+// hold-tap; its keypress bindings are resolved through the shared label property, not through
+// the same DT node. (The AML processor no longer looks at &kp: see the Mouse layer comment.)
 &kpls {
     status = "disabled";
 };
 
 / {
     behaviors {
-        // Mouse wheel on the encoder. Clockwise scrolls down, as the former K_SCROLL_DOWN did.
+        // Mouse wheel on the encoder: &encoder_msc_scroll <cw> <ccw>, e.g. SCRL_DOWN SCRL_UP.
         encoder_msc_scroll: encoder_msc_scroll {
-            compatible = "zmk,behavior-sensor-rotate";
-            #sensor-binding-cells = <0>;
-            bindings = <&msc SCRL_DOWN>, <&msc SCRL_UP>;
+            compatible = "zmk,behavior-sensor-rotate-var";
+            #sensor-binding-cells = <2>;
+            bindings = <&msc>, <&msc>;
             tap-ms = <20>;
         };
 
@@ -106,17 +117,25 @@
         };
 
         // Profile selectors for the BT layer: conversion state and base layer change together.
+        // They do not touch Bluetooth pairing (use the BT_SEL keys for that).
         profile_current: profile_current {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            display-name = "Profile: Current";
+            display-name = "Profile: Mac";
             bindings = <&tog_ls_off &to DEF>;
+        };
+
+        profile_ipad: profile_ipad {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            display-name = "Profile: iPad";
+            bindings = <&tog_ls_off &to IPAD>;
         };
 
         profile_jis: profile_jis {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            display-name = "Profile: JIS";
+            display-name = "Profile: WinJIS";
             bindings = <&tog_ls_on &to JIS>;
         };
     };
@@ -126,24 +145,90 @@
     keymap {
         compatible = "zmk,keymap";
 
+        // ---- Layer 0: Mac (US layout OS). Fully explicit, no &trans: Keymap Editor shows every key. ----
         default_layer {
-            label = "Def";
+            label = "Mac";
             bindings = <
-&kp ESCAPE    &kp Q         &kp W                    &kp E     &kp R        &kp T                 &kp Y               &kp U          &kp I      &kp O           &kp P      &kp DELETE
-&kp TAB       &kp A         &kp S                    &kp D     &kp F        &kp G                 &kp H               &kp J          &lt 4 K    &kp L           &kp SEMI   &lt_mouse_keep MOUSE MINUS
-&kp LSHFT     &kp Z         &kp X                    &kp C     &kp V        &kp B                 &kp N               &kp M          &kp COMMA  &kp DOT         &kp SLASH  &mt RIGHT_SHIFT SQT
-&mt LCTL ESC  &kp LEFT_ALT  &mt LEFT_GUI LANGUAGE_2            &lt 1 SPACE  &lt 4 LANGUAGE_1      &lt FUNC BACKSPACE  &lt NUM ENTER             &kp LG(LS(N5))  &kp RCTRL  &lt 5 GRAVE
-&kp LEFT      &kp UP        &kp SPACE                &kp DOWN  &kp RIGHT                                              &kp HOME       &kp PG_UP  &kp ENTER       &kp PG_DN  &kp END
+&kp ESCAPE    &kp Q         &kp W                    &kp E     &kp R        &kp T                 &kp Y               &kp U          &kp I         &kp O    &kp P      &kp DELETE
+&kp TAB       &kp A         &kp S                    &kp D     &kp F        &kp G                 &kp H               &kp J          &lt SCROLL K  &kp L    &kp SEMI   &lt_mouse_keep MOUSE MINUS
+&kp LSHFT     &kp Z         &kp X                    &kp C     &kp V        &kp B                 &kp N               &kp M          &kp COMMA     &kp DOT  &kp SLASH  &mt RIGHT_SHIFT SQT
+&mt LCTL ESC  &kp LEFT_ALT  &mt LEFT_GUI LANGUAGE_2            &lt FUNC SPACE  &lt SCROLL LANGUAGE_1  &lt FUNC BACKSPACE  &lt NUM ENTER                &kp LG(LS(N5))  &kp RCTRL  &lt BT GRAVE
+&kp LEFT      &kp UP        &kp SPACE                &kp DOWN  &kp RIGHT                                              &kp HOME       &kp PG_UP  &kp ENTER  &kp PG_DN  &kp END
                                                      &kp A                                                                           &kp B
             >;
 
             sensor-bindings =
-                <&encoder_msc_scroll>,
+                <&encoder_msc_scroll SCRL_DOWN SCRL_UP>,
                 <&inc_dec_kp PG_UP PG_DN>;
         };
 
+        // ---- Layer 1: iPad. Mac copy with the LiNEA40 differences: Scroll on I (K is plain),
+        // iPad screenshot at 43, encoder direction reversed. Fully explicit. ----
+        ipad_layer {
+            label = "iPad";
+            bindings = <
+&kp ESCAPE    &kp Q         &kp W                    &kp E     &kp R        &kp T                 &kp Y               &kp U          &lt SCROLL I  &kp O    &kp P      &kp DELETE
+&kp TAB       &kp A         &kp S                    &kp D     &kp F        &kp G                 &kp H               &kp J          &kp K         &kp L    &kp SEMI   &lt_mouse_keep MOUSE MINUS
+&kp LSHFT     &kp Z         &kp X                    &kp C     &kp V        &kp B                 &kp N               &kp M          &kp COMMA     &kp DOT  &kp SLASH  &mt RIGHT_SHIFT SQT
+&mt LCTL ESC  &kp LEFT_ALT  &mt LEFT_GUI LANGUAGE_2            &lt FUNC SPACE  &lt SCROLL LANGUAGE_1  &lt FUNC BACKSPACE  &lt NUM ENTER                &kp LG(LS(N3))  &kp RCTRL  &lt BT GRAVE
+&kp LEFT      &kp UP        &kp SPACE                &kp DOWN  &kp RIGHT                                              &kp HOME       &kp PG_UP  &kp ENTER  &kp PG_DN  &kp END
+                                                     &kp A                                                                           &kp B
+            >;
+
+            sensor-bindings =
+                <&encoder_msc_scroll SCRL_UP SCRL_DOWN>,
+                <&inc_dec_kp PG_UP PG_DN>;
+        };
+
+        // ---- Layer 2: WinJIS (Windows, OS set to a JIS keyboard layout). Selected from the BT layer. ----
+        // Mac copy with the Windows keys: Win/Esc at 36, MUHENKAN at 38, HENKAN (Scroll) at 40,
+        // JFnc/JNum on the thumbs, Win+Shift+S screenshot. Fully explicit.
+        // Minus (23) holds Excel (10). The manual Mouse layer moves to Delete (11), because the
+        // 41-key LiNEA40 has no spare key for it on the MKB 58-key layout.
+        jis_layer {
+            label = "WinJIS";
+            bindings = <
+&kp ESCAPE        &kp Q         &kp W                     &kp E     &kp R              &kp T                 &kp Y                  &kp U                  &kp I         &kp O    &kp P      &lt_mouse_keep MOUSE DELETE
+&kp TAB           &kp A         &kp S                     &kp D     &kp F              &kp G                 &kp H                  &kp J                  &lt SCROLL K  &kp L    &kp SEMI   &lt EXCEL MINUS
+&kp LSHFT         &kp Z         &kp X                     &kp C     &kp V              &kp B                 &kp N                  &kp M                  &kp COMMA     &kp DOT  &kp SLASH  &mt RIGHT_SHIFT SQT
+&mt LEFT_GUI ESC  &kp LEFT_ALT  &mt LCTRL INT_MUHENKAN              &lt JIS_FUNC SPACE  &lt SCROLL INT_HENKAN  &lt JIS_FUNC BACKSPACE  &lt JIS_NUM ENTER                &kp LS(LG(S))  &kp RCTRL  &lt BT GRAVE
+&kp LEFT          &kp UP        &kp SPACE                 &kp DOWN  &kp RIGHT                                                        &kp HOME               &kp PG_UP  &kp ENTER  &kp PG_DN  &kp END
+                                                          &kp A                                                                                         &kp B
+            >;
+
+            sensor-bindings =
+                <&encoder_msc_scroll SCRL_DOWN SCRL_UP>,
+                <&inc_dec_kp PG_UP PG_DN>;
+        };
+
+        // ---- Layer 3: Mouse. Manual layer and the AML target (runtime processor "aml3"). ----
+        // Clicks sit at 19 / 21 / 22. No sensor-bindings: the encoder follows the active base.
+        //
+        // AML keeps this layer on a key press only when the binding that key resolves to is a
+        // non-transparent binding here, or an &mt whose hold modifier is in
+        // temp-layer-keep-keycodes. The marker behavior is &mt (temp-layer-kp-behavior in
+        // snippets/Default/Default.overlay); the runtime compares the behavior device and reads
+        // param1, which for &mt is the hold modifier. Therefore:
+        //  - 35 / 36 / 38 are &trans so the plain &mt of the active profile resolves
+        //    (Mac: Ctrl/Cmd, WinJIS: Win/Ctrl). Do not replace those &mt with another hold-tap
+        //    device; the marker would stop matching.
+        //  - 24 (LSHFT), 37 (LALT) and 44 (RCTRL) are plain &kp in all three bases, so they are
+        //    repeated here as &kp. Keep these three copies in sync with the base layers.
+        mouse_layer {
+            label = "Mouse";
+            bindings = <
+&trans      &trans  &trans  &trans    &trans  &trans  &trans  &trans    &trans  &trans    &trans    &trans
+&trans      &trans  &trans  &trans    &trans  &trans  &trans  &mkp MB1  &trans  &mkp MB2  &mkp MB3  &trans
+&kp LSHFT   &trans  &trans  &trans    &trans  &trans  &trans  &trans    &trans  &trans    &trans    &trans
+&trans      &kp LALT  &trans            &trans  &trans  &trans  &trans            &trans  &kp RCTRL  &trans
+&kp LEFT    &kp UP  &kp SPACE  &kp DOWN  &kp RIGHT                      &kp HOME  &kp PG_UP  &kp ENTER  &kp PG_DN  &kp END
+                               &kp A                                              &kp B
+            >;
+        };
+
+        // ---- Layer 4: Arrow (Mac function layer, held from the thumbs). ----
         function_layer {
-            label = "Fnc";
+            label = "Arrow";
             bindings = <
 &trans    &kp F1   &kp F2              &kp F3         &kp F4             &kp F5         &kp F6     &kp F7          &kp F8          &kp F9                &kp F10           &trans
 &trans    &kp F11  &kp LC(LEFT_ARROW)  &kp PAGE_UP    &kp LC(RIGHT)      &kp HOME       &kp LG(C)  &mkp MB1        &kp UP_ARROW    &mkp MB2              &mkp MB3          &trans
@@ -153,9 +238,12 @@
                                        &kp A                                                                       &kp B
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings =
+                <&encoder_msc_scroll SCRL_DOWN SCRL_UP>,
+                <&inc_dec_kp PG_UP PG_DN>;
         };
 
+        // ---- Layer 5: Num (Mac number / symbol layer). ----
         num_layer {
             label = "Num";
             bindings = <
@@ -172,27 +260,54 @@
                 <&inc_dec_kp PG_UP PG_DN>;
         };
 
-        mouse_layer {
-            label = "Mouse";
-            // Also the AML target. The runtime keeps this layer on a key press only if its own
-            // binding at that position is non-transparent, so the base mod-taps are repeated here
-            // (positions 35, 36, 38) to preserve modifier-clicks. Keep them in sync with the base.
+        // ---- Layer 6: ArrowWin (WinJIS function layer, held from the thumbs). ----
+        // The 3x10 core follows the LiNEA40 ARROW_win_jp layer and sits on the inner ten columns of
+        // rows 0-2 (positions 1-10, 13-22, 25-34). The outer positions 0 / 11 / 12 / 23 / 24 / 35
+        // stay transparent. Bottom row (36-45) is LiNEA40 indices 30-40 without the unused 32.
+        // The thumb keys 38-42 are transparent so the WinJIS thumb hold-taps keep working.
+        jis_function_layer {
+            label = "ArrowWin";
             bindings = <
-&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
-&trans        &trans  &trans     &trans    &trans     &trans      &trans  &mkp MB1  &trans     &mkp MB2   &mkp MB3   &trans
-&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &mt RIGHT_SHIFT SQT
-&mt LCTL ESC  &trans  &mt LEFT_GUI LANGUAGE_2        &trans     &trans      &trans  &trans               &trans     &trans     &trans
-&kp LEFT      &kp UP  &kp SPACE  &kp DOWN  &kp RIGHT                      &kp HOME  &kp PG_UP  &kp ENTER  &kp PG_DN  &kp END
-                                 &kp A                                              &kp B
+&trans      &kp F1            &kp F2              &kp F3         &kp F4              &kp F5    &kp F6     &kp F7          &kp F8          &kp F9    &kp F10      &trans
+&trans      &kp LC(HOME)      &kp LC(LG(LEFT))    &kp PAGE_UP    &kp LC(LG(RIGHT))   &kp HOME  &kp RC(C)  &mkp MB1        &kp UP_ARROW    &mkp MB2  &mkp MB3     &trans
+&trans      &kp LC(END)       &kp LG(LEFT)        &kp PAGE_DOWN  &kp LG(RIGHT)       &kp END   &kp RC(V)  &kp LEFT        &kp DOWN_ARROW  &kp RIGHT &kp RG(TAB)  &trans
+&kp ESCAPE  &kp INT_HENKAN    &trans                             &trans              &trans    &trans     &trans                          &kp PRINTSCREEN  &kp F11  &kp GRAVE
+&kp LEFT    &kp UP            &kp SPACE           &kp DOWN       &kp RIGHT                                &kp HOME        &kp PG_UP       &kp ENTER       &kp PG_DN &kp END
+                                                  &kp A                                                                                   &kp B
             >;
 
             sensor-bindings =
-                <&encoder_msc_scroll>,
+                <&encoder_msc_scroll SCRL_RIGHT SCRL_LEFT>,
                 <&inc_dec_kp PG_UP PG_DN>;
         };
 
+        // ---- Layer 7: NumWin (WinJIS number / symbol layer). ----
+        // US symbol names go through &kp once; the layout shift converts them for the JIS OS.
+        // The core 3x10 follows LiNEA40 NUM_win_jp, whose raw JIS codes were translated to the US
+        // symbol that produces the same character on a JIS OS (translated once, never twice):
+        // raw LEFT_BRACKET = @, EQUAL = ^, CARET = &, RS(COLON) = +, PLUS = ~, AT_SIGN = ".
+        // The digits are keypad digits, so Windows needs NumLock on: KP_NUMLOCK is at position 0.
+        // Outer keys: 0 NumLock, 11 {, 12 Hankaku/Zenkaku, 23 }. Caret is in the core (position 20).
+        // The "~" key moved from the old JNum position 43 to 44, the pipe to 43.
+        jis_num_layer {
+            label = "NumWin";
+            bindings = <
+&kp KP_NUMLOCK   &kp SLASH       &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp ASTERISK       &kp INT_YEN         &kp EXCLAMATION        &kp AT_SIGN       &kp HASH           &kp DOLLAR         &kp LEFT_BRACE
+&kp LANGUAGE_5   &kp COLON       &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp MINUS          &kp GRAVE             &kp PERCENT            &kp CARET         &kp AMPERSAND      &kp SEMICOLON      &kp RIGHT_BRACE
+&mt LSHFT SPACE  &kp UNDERSCORE  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp PLUS           &kp LEFT_PARENTHESIS  &kp RIGHT_PARENTHESIS  &kp LEFT_BRACKET  &kp RIGHT_BRACKET  &kp SQT            &trans
+&kp PERIOD       &kp KP_NUMBER_0  &trans                           &kp EQUAL        &trans             &trans                &trans                                   &kp PIPE           &kp TILDE          &kp DOUBLE_QUOTES
+&kp LEFT         &kp UP           &kp SPACE        &kp DOWN         &kp RIGHT                                                &kp HOME               &kp PG_UP         &kp ENTER          &kp PG_DN          &kp END
+                                                   &kp A                                                                                           &kp B
+            >;
+
+            sensor-bindings =
+                <&inc_dec_kp C_VOL_UP C_VOL_DN>,
+                <&inc_dec_kp PG_UP PG_DN>;
+        };
+
+        // ---- Layer 8: Scroll. The ball scrolls here (see the listener in Default.overlay). ----
         scroll_layer {
-            label = "Scr";
+            label = "Scroll";
             bindings = <
 &trans    &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
 &trans    &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
@@ -203,89 +318,39 @@
             >;
 
             sensor-bindings =
-                <&encoder_msc_scroll>,
+                <&inc_dec_kp RIGHT_ARROW LEFT_ARROW>,
                 <&inc_dec_kp PG_UP PG_DN>;
         };
 
+        // ---- Layer 9: BT. Bluetooth keys, studio unlock and the three profile selectors.
+        // No sensor-bindings: the encoder follows the active base. ----
+        // H (18) = Mac, J (19) = iPad, Minus (23) = WinJIS. The selectors do not change the BT pairing.
         bt_layer {
             label = "BT";
             bindings = <
 &bt BT_CLR  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4      &bt BT_CLR_ALL  &studio_unlock  &trans     &trans     &trans     &trans
-&trans      &trans        &trans        &trans        &trans        &trans            &profile_current  &profile_jis  &trans     &trans     &trans     &trans
+&trans      &trans        &trans        &trans        &trans        &trans            &profile_current  &profile_ipad  &trans     &trans     &trans     &profile_jis
 &trans      &trans        &trans        &trans        &trans        &trans            &trans          &trans          &trans     &trans     &trans     &trans
 &trans      &trans        &trans                      &trans        &trans            &trans          &trans                     &trans     &trans     &trans
 &kp LEFT    &kp UP        &kp SPACE     &kp DOWN      &kp RIGHT                                       &kp HOME        &kp PG_UP  &kp ENTER  &kp PG_DN  &kp END
                                         &kp A                                                                         &kp B
             >;
-
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
 
-        // Index 6: legacy Auto Mouse slot, no longer used. AML now targets the ordinary Mouse (3)
-        // (runtime processor "aml3"). Left in place so saved Studio settings for index 6
-        // never end up on a different layer.
-
-        auto_mouse_layer {
-            label = "Auto Mouse";
+        // ---- Layer 10: Excel. Held with Minus on WinJIS (23). H (18) sends the raw
+        // Ctrl+Shift+; chord of LiNEA40 through the original (non layout-shifted) &kp, so it
+        // bypasses the JIS conversion. Everything else falls through to the active base, and the
+        // layer has no sensor-bindings. ----
+        excel_layer {
+            label = "Excel";
             bindings = <
-&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
-&trans        &trans  &trans     &trans    &trans     &trans      &trans  &mkp MB1  &trans     &mkp MB2   &trans     &trans
-&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
-&mt LCTL ESC  &trans  &trans               &trans     &trans      &trans  &trans               &trans     &trans     &trans
-&kp LEFT      &kp UP  &kp SPACE  &kp DOWN  &kp RIGHT                      &kp HOME  &kp PG_UP  &kp ENTER  &kp PG_DN  &kp END
-                                 &kp A                                              &kp B
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &original_key_press RC(RS(SEMICOLON))  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                &trans                                          &trans
             >;
-
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
-        };
-
-        // ---- JIS profile (Windows, OS set to a JIS keyboard layout). Selected from the BT layer. ----
-        // Layers 7-9 sit above Mouse (3) and BT (5). Layer 7 is sparse on purpose: everything it
-        // leaves transparent (Mouse clicks, manual Mouse key, BT keys, profile selectors, BT hold)
-        // keeps working. It has no sensor-bindings, so the encoder follows Default/Mouse/Scroll/BT.
-        // &to 7 leaves layer 0 active underneath.
-
-        jis_layer {
-            label = "JIS";
-            bindings = <
-&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
-&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
-&trans        &trans  &trans     &trans    &trans     &trans      &trans  &trans    &trans     &trans     &trans     &trans
-&mt LEFT_GUI ESC  &trans  &mt LCTRL INT_MUHENKAN  &lt JIS_FUNC SPACE  &lt SCROLL INT_HENKAN  &lt JIS_FUNC BACKSPACE  &lt JIS_NUM ENTER  &kp LS(LG(S))  &trans  &trans
-&trans        &trans  &trans     &trans    &trans                          &trans    &trans     &trans     &trans     &trans
-                                 &trans                                             &trans
-            >;
-        };
-
-        jis_function_layer {
-            label = "JFnc";
-            bindings = <
-&trans    &kp F1   &kp F2                    &kp F3         &kp F4                    &kp F5         &kp F6     &kp F7          &kp F8          &kp F9                &kp F10           &trans
-&trans    &kp F11  &kp LG(LC(LEFT_ARROW))    &kp PAGE_UP    &kp LC(LG(RIGHT_ARROW))   &kp HOME       &kp LC(C)  &mkp MB1        &kp UP_ARROW    &mkp MB2              &mkp MB3          &trans
-&trans    &kp F12  &kp LG(LEFT)              &kp PAGE_DOWN  &kp LG(RIGHT_ARROW)       &kp END        &kp LC(V)  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT             &kp RG(TAB)       &trans
-&trans    &trans   &kp LALT                                 &kp ENTER                 &kp ENTER      &kp ENTER  &kp ENTER                       &kp LG(PRINTSCREEN)   &kp RC(SPACE)                         &trans
-&kp LEFT  &kp UP   &kp SPACE                 &kp DOWN       &kp RIGHT                                           &kp HOME        &kp PG_UP       &kp ENTER             &kp PG_DN         &kp END
-                                             &kp A                                                                              &kp B
-            >;
-
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
-        };
-
-        // US symbol names go through &kp once; the layout shift converts them for the JIS OS.
-        jis_num_layer {
-            label = "JNum";
-            bindings = <
-&kp CARET        &kp SLASH  &kp NUMBER_7  &kp N8        &kp N9        &kp LS(N8)         &kp INT_YEN           &kp EXCLAMATION        &kp AT_SIGN       &kp HASH           &kp DOLLAR         &trans
-&kp LANGUAGE_5   &kp COLON  &kp NUMBER_4  &kp N5        &kp NUMBER_6  &kp MINUS          &kp GRAVE             &kp PERCENT            &kp LCTRL         &kp AMPS           &kp SEMICOLON      &trans
-&mt LSHFT SPACE  &kp UNDER  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &kp LS(EQUAL)      &kp LEFT_PARENTHESIS  &kp RIGHT_PARENTHESIS  &kp LEFT_BRACKET  &kp RIGHT_BRACKET  &kp SQT            &trans
-&kp PIPE         &kp LEFT_BRACE  &kp N0                &kp EQUAL     &kp ENTER          &kp RIGHT_BRACE       &kp ENTER                                &kp TILDE          &kp DOUBLE_QUOTES  &trans
-&kp LEFT         &kp UP     &kp SPACE     &kp DOWN      &kp RIGHT                                              &kp HOME               &kp PG_UP         &kp ENTER          &kp PG_DN          &kp END
-                                          &kp A                                                                                       &kp B
-            >;
-
-            sensor-bindings =
-                <&inc_dec_kp C_VOL_DN C_VOL_UP>,
-                <&inc_dec_kp PG_UP PG_DN>;
         };
     };
 };

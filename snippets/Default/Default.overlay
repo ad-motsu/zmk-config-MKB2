@@ -4,7 +4,8 @@
     // Separate runtime AML from mouse tuning used by the arrow override.
     // AML now activates the ordinary Mouse layer (3). The label is aml3 (not "aml")
     // so a target saved by Studio under the old "aml" label (layer 6) cannot override it.
-    // Layer 6 (Auto Mouse) is left unused for compatibility with saved keymap settings.
+    // Layer IDs follow config/MKB.keymap: Mac 0, iPad 1, WinJIS 2, Mouse 3, Arrow 4, Num 5,
+    // ArrowWin 6, NumWin 7, Scroll 8, BT 9, Excel 10. The old legacy Auto Mouse slot is gone.
     aml_runtime_input_processor: aml_runtime_input_processor {
         compatible = "zmk,input-processor-runtime";
         processor-label = "aml3";
@@ -18,7 +19,14 @@
         temp-layer-activation-delay-ms = <150>;
         temp-layer-deactivation-delay-ms = <500>;
         temp-layer-transparent-behavior = <&trans>;
-        temp-layer-kp-behavior = <&kp>;
+        // The marker behavior is &mt, not &kp: the runtime compares the behavior device of the
+        // key's resolved binding and reads its param1, which for &mt is the hold modifier. The
+        // Mouse layer leaves 35 / 36 / 38 transparent so the plain &mt of the active profile
+        // (Mac Ctrl/Cmd, WinJIS Win/Ctrl) keeps Mouse alive for modifier-clicks. Never change
+        // those plain &mt to another hold-tap device. The plain &kp modifiers at 24 / 37 / 44
+        // are copied into the Mouse layer; keep those three copies in sync with the base layers.
+        // The &kp driver has one instance (kpls is disabled), so this no longer refers to it.
+        temp-layer-kp-behavior = <&mt>;
         temp-layer-keep-keycodes = <LEFT_CONTROL LEFT_SHIFT LEFT_ALT LEFT_GUI
                                     RIGHT_CONTROL RIGHT_SHIFT RIGHT_ALT RIGHT_GUI>;
     };
@@ -30,33 +38,33 @@
         // Keep sensor orientation before runtime rotation or axis swapping.
         input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                            <&mouse_runtime_input_processor &scroll_runtime_input_processor>,
-                           // AML activates Mouse (3); layer 6 is an unused legacy slot.
+                           // AML activates Mouse (3).
                            <&aml_runtime_input_processor>,
                            // Reverse only horizontal output after runtime tuning.
                            <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>;
 
-        // Scroll (4): ball scrolls and never triggers AML.
+        // Scroll (8): ball scrolls and never triggers AML.
         scroll {
-            layers = <4>;
-            input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>, 
+            layers = <8>;
+            input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                                <&zip_xy_to_scroll_mapper>, 
                                <&scroll_runtime_input_processor>;
         };
 
-        // Fn (1) and JIS Fn (8): half-speed cursor. Placed after scroll so Scr (4) wins if both
-        // are held, and before the Num overrides. AML is omitted so Mouse (3) cannot rise above
-        // Fn. The scaler is last so it halves relative X/Y after the saved runtime tuning.
+        // Arrow (4) and ArrowWin (6): half-speed cursor. Placed after scroll so Scroll (8) wins if
+        // both are held, and before the Num overrides. AML is omitted during precision mode.
+        // The scaler is last so it halves relative X/Y after the saved runtime tuning.
         precision {
-            layers = <1 8>;
+            layers = <4 6>;
             input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                                <&mouse_runtime_input_processor &scroll_runtime_input_processor>,
                                <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                                <&zip_xy_scaler 1 2>;
         };
 
-        // Num (2) and JIS Num (9): ball emits arrow keys, no cursor motion, no AML.
+        // Num (5) and NumWin (7): ball emits arrow keys, no cursor motion, no AML.
         arrow {
-            layers = <2 9>;
+            layers = <5 7>;
             input-processors = <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
                                <&mouse_runtime_input_processor &scroll_runtime_input_processor>,
                                <&zip_xy_transform INPUT_TRANSFORM_X_INVERT>,
@@ -65,7 +73,7 @@
         };
         
         arrow-prevent-move {
-            layers = <2 9>;
+            layers = <5 7>;
             input-processors = <&zip_xy_scaler 0 1>;
         };
     };
@@ -92,7 +100,7 @@
                                <&scroll_runtime_input_processor>;
         };
         layer1 {
-            layers = <1>;
+            layers = <4>;
             input-processors = <&scroll_runtime_input_processor>;
         };
     };
@@ -106,9 +114,9 @@
                            <&scroll_runtime_input_processor>;
 
         scroller {
-            layers = <5>;
+            layers = <9>;
             input-processors = <&zip_xy_transform (INPUT_TRANSFORM_XY_SWAP)>,
-                               <&zip_xy_to_scroll_mapper>, 
+                               <&zip_xy_to_scroll_mapper>,
                                <&scroll_runtime_input_processor>;
         };
     };
