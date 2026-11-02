@@ -7,3 +7,5 @@ result
 .vscode/launch.json
 .vscode/settings.json
 /badges/build-health/
+/tests/__pycache__/
+/scripts/__pycache__/

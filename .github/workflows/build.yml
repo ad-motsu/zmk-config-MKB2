@@ -16,12 +16,16 @@ on:
     # Daily build health check at 05:00 JST.
     - cron: "0 20 * * *"
   push:
+    branches:
+      - '**'
     paths:
       - "config/**"
       - "boards/**"
       - "snippets/**"
       - "build.yaml"
       - "zephyr/module.yml"
+      - "CMakeLists.txt"
+      - "src/**"
       - ".github/workflows/build.yml"
 
 permissions:
