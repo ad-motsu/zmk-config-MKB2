@@ -1,11 +1,11 @@
 {
   "artifact": {
     "name": "MKB_L_MODULE_JOY.uf2",
-    "sha256": "cffd1a1badcba9f6149acd3a39b996fff929ab4997c9aa7cf21526d81b3adf59"
+    "sha256": "bbfd72fefa8ef258166500a586b1090638c504acf8502cb74488b3d882772d1c"
   },
   "generated": {
     ".config": "9c87e7cdf154135c6e24494038c423acdd3bf43359dd4940b87d99261379fce2",
-    "zephyr.dts": "a4c3ba1fe789288d0aff534cf79a39a90c3dae9371226ee094ef64936cb749a1"
+    "zephyr.dts": "7d2653986c512b92dc1e868d9b599c1d7c3e0428b7dc5c9be33d81b5abc5b6b2"
   },
   "inputs": {
     "dependencies": {
@@ -323,7 +323,7 @@
       }
     },
     "source": {
-      "commit": "233faea1e84ecc0844cf9cb2b901f37cef0569c4",
+      "commit": "0d225168666c3a1b93fb9e9ec72b352e24c97c15",
       "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "dirty": false,
       "untracked": {}
@@ -335,7 +335,7 @@
       "untracked": {}
     }
   },
-  "run_id": "41035906112",
+  "run_id": "41412391498",
   "schema": 1,
   "target": {
     "artifact-name": "MKB_L_MODULE_JOY",
