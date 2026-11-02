@@ -265,6 +265,20 @@ svg.physical-layout { font-family: ui-monospace, SFMono-Regular, Consolas, monos
 <rect x="0" y="0" width="52" height="52" rx="6" ry="6"/>
 <text class="tap" x="26" y="26">B</text>
 </g>
+<g class="combo combo-combo_1">
+<polyline points="680,142 732,142"/>
+<circle class="combo-dot" cx="680" cy="142" r="3.2"/>
+<circle class="combo-dot" cx="732" cy="142" r="3.2"/>
+<rect class="combo-label-bg" x="671.1" y="121" width="69.8" height="16" rx="8" ry="8"/>
+<text class="combo-label" x="706" y="129">MOUSE MB1</text>
+</g>
+<g class="combo combo-combo_2">
+<polyline points="732,142 784,142"/>
+<circle class="combo-dot" cx="732" cy="142" r="3.2"/>
+<circle class="combo-dot" cx="784" cy="142" r="3.2"/>
+<rect class="combo-label-bg" x="723.1" y="121" width="69.8" height="16" rx="8" ry="8"/>
+<text class="combo-label" x="758" y="129">MOUSE MB2</text>
+</g>
 </g>
 <g class="layer layer-ipad_layer" transform="translate(0 383)">
 <text class="title" x="30" y="10">iPad</text>
